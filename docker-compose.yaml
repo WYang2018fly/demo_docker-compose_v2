@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  svc-users:
+    image: svc-user:latest
+    restart: always
+    volumes: 
+      - ./service/service_conf/production.yaml:/service/config/production.yaml
+    ports:
+      - "9007:9007"
+    
+  svc-tasks:
+    image: svc-task:latest
+    restart: always
+    volumes: 
+      - ./service/service_conf/production.yaml:/service/config/production.yaml
+    ports:
+      - "9008:9008"
+
+  web-myapp:
+    image: app-my_app:latest
+    restart: always
+    ports:
+    - "80:80"
+    depends_on: 
+      - svc-users
+      - svc-tasks

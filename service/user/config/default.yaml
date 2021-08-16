@@ -1,0 +1,2 @@
+port: 9007
+mongo: mongodb://localhost:27017/dev
