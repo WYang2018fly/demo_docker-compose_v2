@@ -1,0 +1,59 @@
+## STATIC CONFIGURATION
+
+# Global configuration
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+
+# EntryPoints configuration
+entryPoints:
+  app:
+    address: :80
+  service:
+    address: :19007
+    
+# API and dashboard configuration
+api:
+  insecure: true
+  dashboard: true
+    
+# Docker configuration backend
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    # Do not expose containers unless explicitly told so
+    exposedByDefault: false
+
+## DYNAMIC CONFIGURATION
+# http:
+#   routers:
+#     router_to_app:
+#       entryPoints:
+#       - "app"
+#       rule: "Host:(`myapp.example.com`)"
+#       service: "my_app"
+#     router_to_svc-user:
+#       entryPoints:
+#       - "svc-user"
+#       rule: "Host:(`user.example.com`)"
+#       service: "svc-user"
+#     router_to_svc-task:
+#       entryPoints:
+#       - "svc-task"
+#       rule: "Host:(`task.example.com`)"
+#       service: "svc-task"
+
+#   services:
+#     my_app:
+#       loadBalancer:
+#         servers:
+#         - address: 172.20.0.5:80
+#     svc-user:
+#       loadBalancer:
+#         servers:
+#         - address: 172.20.0.3:9007
+#     svc-task:
+#       loadBalancer:
+#         servers:
+#         - address: 172.20.0.2:9008
+

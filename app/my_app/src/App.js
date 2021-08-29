@@ -14,13 +14,14 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
+    console.log(window.SVC_TRAEFIK_URL, window.SVC_BASE_URLS);
     let userResponse = await axios({
       method: 'get',
-      url: 'http://localhost:9007/api/users'
+      url: `${window.SVC_TRAEFIK_URL ? window.SVC_TRAEFIK_URL : window.SVC_BASE_URLS.User}/api/users`
     });
     let tasksResponse = await axios({
       method: 'get',
-      url: 'http://localhost:9008/api/tasks'
+      url: `${window.SVC_TRAEFIK_URL ? window.SVC_TRAEFIK_URL : window.SVC_BASE_URLS.Task}/api/tasks`
     });
 
     this.setState({

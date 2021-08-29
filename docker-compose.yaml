@@ -1,27 +1,64 @@
 version: "3"
 
 services:
-  svc-users:
+  svc-user:
     image: svc-user:latest
     restart: always
     volumes: 
       - ./service/service_conf/production.yaml:/service/config/production.yaml
-    ports:
-      - "9007:9007"
-    
-  svc-tasks:
+    # ports:
+      # - "9007:9007"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.svc-user.entrypoints=service"
+      - "traefik.http.routers.svc-user.rule=PathPrefix(`/api/users`)"
+      # - "traefik.http.routers.svc-user.middlewares=svc-user-stripprefix"
+      # - "traefik.http.middlewares.svc-user-stripprefix.stripprefix.prefixes=/api/user"
+      # - "traefik.http.middlewares.svc-user-stripprefix.stripprefix.forceSlash=false"
+      - "traefik.http.services.svc-user.loadbalancer.server.port=9007"
+      
+  svc-task:
     image: svc-task:latest
     restart: always
     volumes: 
       - ./service/service_conf/production.yaml:/service/config/production.yaml
-    ports:
-      - "9008:9008"
+    # ports:
+      # - "9008:9008"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.svc-task.entrypoints=service"
+      - "traefik.http.routers.svc-task.rule=PathPrefix(`/api/tasks`)"
+      # - "traefik.http.routers.svc-task.middlewares=svc-task-stripprefix"
+      # - "traefik.http.middlewares.svc-task-stripprefix.stripprefix.prefixes=/api/task"
+      # - "traefik.http.middlewares.svc-task-stripprefix.stripprefix.forceSlash=false"
+      - "traefik.http.services.svc-task.loadbalancer.server.port=9008"
 
   web-myapp:
     image: app-my_app:latest
     restart: always
-    ports:
-    - "80:80"
+    # ports:
+    # - "80:80"
+    labels:
+      - "traefik.enable=true"
+      # - "traefik.http.routers.web-myapp.rule=Host(`myapp.example.com`)"
+      - "traefik.http.routers.web-myapp.entrypoints=app"
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`)'
     depends_on: 
-      - svc-users
-      - svc-tasks
+      - svc-user
+      - svc-task
+    
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    # command:
+    #   - "--providers.docker=true"
+    environment: 
+       - "SVC_TRAEFIK_URL=http://localhost:19007"
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "19007:19007"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yaml:/etc/traefik/traefik.yaml"
+

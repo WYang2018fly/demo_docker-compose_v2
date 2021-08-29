@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "docker": "yarn build && docker buildx build --platform linux/arm64 -t svc-user ."
   },
   "keywords": [],
   "author": "",
