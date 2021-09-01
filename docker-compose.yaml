@@ -16,6 +16,8 @@ services:
       # - "traefik.http.middlewares.svc-user-stripprefix.stripprefix.prefixes=/api/user"
       # - "traefik.http.middlewares.svc-user-stripprefix.stripprefix.forceSlash=false"
       - "traefik.http.services.svc-user.loadbalancer.server.port=9007"
+    networks:
+      - svc
       
   svc-task:
     image: svc-task:latest
@@ -32,6 +34,8 @@ services:
       # - "traefik.http.middlewares.svc-task-stripprefix.stripprefix.prefixes=/api/task"
       # - "traefik.http.middlewares.svc-task-stripprefix.stripprefix.forceSlash=false"
       - "traefik.http.services.svc-task.loadbalancer.server.port=9008"
+    networks:
+      - svc
 
   web-myapp:
     image: app-my_app:latest
@@ -46,6 +50,8 @@ services:
     depends_on: 
       - svc-user
       - svc-task
+    networks:
+      - app
     
   traefik:
     image: "traefik:v2.5"
@@ -61,4 +67,12 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik.yaml:/etc/traefik/traefik.yaml"
+    networks:
+      - app
+      - svc
 
+networks:
+  app:
+    driver: bridge
+  svc:
+    driver: bridge
